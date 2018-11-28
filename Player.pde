@@ -114,10 +114,16 @@ class Player {
     if (holdDown) {
       yPos++;
     }
+    
+  }
+  
+  void stopMoving() {
+    println("stop");
   }
 
   void reset()
   {
+    
   }
 
 

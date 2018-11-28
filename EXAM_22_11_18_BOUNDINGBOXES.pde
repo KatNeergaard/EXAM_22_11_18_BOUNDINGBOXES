@@ -99,7 +99,7 @@ void draw()
     for (int i=0; i<candies.length; i++) {
       candies[i].display();
     }
-    levels[weAreInLevel].display(); //displays the current level
+    levels[0].display(); //displays the current level
   }
 }
 
@@ -108,9 +108,11 @@ void keyPressed()
   for (int i = 0; i < players.length; i++)
   {
     players[i].keyWasPressed(key);
+    println(players[i].getClass());
+    checkCollide(players[i], players[i].getX(), players[i].getY());
   }
   startScreen.keyWasPressed(key);
-  something();
+  
   if (keyCode=='V') {
     gamestate=4;
     if (gamestate==4) {
@@ -146,11 +148,17 @@ void mousePressed() {
   gamestate=1;
 }
 
-void something() {
-  Tile[] tiles = levels[weAreInLevel].GetTiles(); 
-  for (int i = 0; i < tiles.length; i++)
-  {
-    tiles[i].test();
+void checkCollide(Player player, int x, int y) {
+  Tile[] tiles = levels[weAreInLevel].GetTiles();
+  println(player, x, y);
+  for (int i = 0; i < tiles.length; i++) {
+    if (tiles[i].collide == true) {
+      
+      println(player.getX() > tiles[i].xPos && tiles[i].collide == true);
+      if (player.getX() > tiles[i].xPos && tiles[i].collide == true) {
+        player.stopMoving();
+      }
+    }
   }
 }
 

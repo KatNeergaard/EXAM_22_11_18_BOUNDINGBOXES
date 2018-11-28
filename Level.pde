@@ -33,9 +33,9 @@ class Level
     {
       for (int j=0; j<lines[i].length(); j++) //goes through rows
       {
-        if (lines[i].charAt(j)=='1')
-        {
+        if (lines[i].charAt(j)=='1') {
           tiles[currentTile].showTile(j*25, i*25);
+          tiles[currentTile].collide=true;
           currentTile++;
         } else if (lines[i].charAt(j)=='2') {
           candies[currentCandy].showCandy(j*25, i*25);
