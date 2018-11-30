@@ -19,6 +19,7 @@ Level[] levels = new Level[3];
 int weAreInLevel=0;
 int numb;
 int life=100;
+Exit exit; 
 
 void setup()
 {
@@ -67,6 +68,7 @@ void setup()
   }
   players[0].setControls(controls);
   players[1].setControls(controls1);
+  exit = new Exit(); //do we need this in levels or here? 
 }
 
 void draw()
@@ -91,7 +93,7 @@ void draw()
     for (int i = 0; i < skeletons.length; i++)
     {
       // skeletons[i].display();
-     // skeletons[i].attackPlayer();
+      // skeletons[i].attackPlayer();
     }
     for (int i=0; i<monsters.length; i++) {
       monsters[i].display();
@@ -99,8 +101,9 @@ void draw()
     for (int i=0; i<candies.length; i++) {
       candies[i].display();
     }
-    levels[0].display(); //displays the current level
+    levels[weAreInLevel].display(); //displays the current level
   }
+  //exit.display();
 }
 
 void keyPressed()
@@ -112,7 +115,7 @@ void keyPressed()
     checkCollide(players[i], players[i].getX(), players[i].getY());
   }
   startScreen.keyWasPressed(key);
-  
+
   if (keyCode=='V') {
     gamestate=4;
     if (gamestate==4) {
@@ -153,7 +156,7 @@ void checkCollide(Player player, int x, int y) {
   println(player, x, y);
   for (int i = 0; i < tiles.length; i++) {
     if (tiles[i].collide == true) {
-      
+
       println(player.getX() > tiles[i].xPos && tiles[i].collide == true);
       if (player.getX() > tiles[i].xPos && tiles[i].collide == true) {
         player.stopMoving();

@@ -5,12 +5,15 @@ class Level
   Tile[] tiles = new Tile[512];
   Candy[] candies = new Candy[50];
   Skeleton[] skeletons = new Skeleton[50];
+  Exit exit;
+
   Level(int l)
   {
     id=l;
     //load level id:
     String[] lines = loadStrings("map"+id+".txt");
-
+    //instatiating the classes needed
+    exit = new Exit();
     for (int i=0; i<tiles.length; i++)
     {
       tiles[i] = new Tile();
@@ -20,7 +23,7 @@ class Level
     {
       candies[i] = new Candy();
     }
-    
+
     for (int i=0; i<skeletons.length; i++)
     {
       skeletons[i] = new Skeleton();
@@ -29,6 +32,7 @@ class Level
     int currentTile=0;
     int currentCandy=0;
     int currentSkeletons=0;
+    int currentExit=0;
     for (int i=0; i<lines.length; i++) //goes through lines
     {
       for (int j=0; j<lines[i].length(); j++) //goes through rows
@@ -43,6 +47,8 @@ class Level
         } else if (lines[i].charAt(j)=='3') {
           skeletons[currentSkeletons].showSkeleton(j*25, i*25);
           currentSkeletons++;
+        } else if (lines[i].charAt(j)=='5') {
+          exit.showExit(j*25, i*25);
         }
       }
     }
@@ -62,12 +68,13 @@ class Level
     {
       skeletons[i].display();
     }
+    exit.display();
   }
-  
+
   //can we put everything in the textfile? SO: monsters, skeletons, candy, tiles and exits?
   //then: if (player collides with exit){level++ - OR weAreInLevel++?
-  
-   Tile[] GetTiles(){
-     return tiles;
-   }
+
+  Tile[] GetTiles() {
+    return tiles;
+  }
 }
