@@ -12,6 +12,7 @@ class Monster {
   int w = 50;
   boolean wasMonsterHit=false;
   int monsterLife=8;
+  boolean isOn=false;
 
   //constructor
   Monster() {
@@ -34,6 +35,13 @@ class Monster {
       //ticksLast = millis(); //adds up time overshooting error
       ticksLast += delta; //avoids adding up error
     }
+  }
+
+  void showMonster(int posX, int posY)
+  {
+    xPos=posX;
+    yPos=posY;
+    isOn=true;
   }
 
   void shoot() {

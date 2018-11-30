@@ -50,7 +50,7 @@ class Tile
       /*if ( bb.intersects(bbT)) { //collide with right side of tile
         print(":OOOO");
       }*/
-      if ((playerX+playerW)>xPos && (playerX)<(xPos+tileWidth)) { //left side of tile
+      if ((playerX+playerW)>xPos && playerX<(xPos+tileWidth)) { //left side of tile
         if ((playerX+playerW) > yPos && (playerX)<(yPos+tileHeight)) {
         //  collide=true;
         //} else {

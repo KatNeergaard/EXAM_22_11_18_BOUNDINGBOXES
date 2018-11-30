@@ -6,7 +6,7 @@ class Level
   Candy[] candies = new Candy[50];
   Skeleton[] skeletons = new Skeleton[50];
   Exit exit;
-
+  Monster[] monsters = new Monster[20];
   Level(int l)
   {
     id=l;
@@ -28,11 +28,13 @@ class Level
     {
       skeletons[i] = new Skeleton();
     }
-
+    for (int i=0; i<monsters.length; i++) {
+      monsters[i] = new Monster();
+    }
     int currentTile=0;
     int currentCandy=0;
     int currentSkeletons=0;
-    int currentExit=0;
+    int currentMonsters=0;
     for (int i=0; i<lines.length; i++) //goes through lines
     {
       for (int j=0; j<lines[i].length(); j++) //goes through rows
@@ -49,6 +51,9 @@ class Level
           currentSkeletons++;
         } else if (lines[i].charAt(j)=='5') {
           exit.showExit(j*25, i*25);
+        } else if (lines[i].charAt(j)=='4') {
+          monsters[currentMonsters].showMonster(j*25, i*25);
+          currentMonsters++;
         }
       }
     }
@@ -68,7 +73,15 @@ class Level
     {
       skeletons[i].display();
     }
+    for (int i=0; i<monsters.length; i++) {
+      monsters[i].display();
+    }
     exit.display();
+  }
+
+  void updateLevel() {
+    //if player collides with exit
+    //id++
   }
 
   //can we put everything in the textfile? SO: monsters, skeletons, candy, tiles and exits?
