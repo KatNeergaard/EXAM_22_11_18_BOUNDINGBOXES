@@ -7,10 +7,12 @@ class Level
   Skeleton[] skeletons = new Skeleton[50];
   Exit exit;
   Monster[] monsters = new Monster[20];
+
+  //constructer
   Level(int l)
   {
     id=l;
-    //load level id:
+    //load level id
     String[] lines = loadStrings("map"+id+".txt");
     //instatiating the classes needed
     exit = new Exit();
@@ -59,6 +61,7 @@ class Level
     }
   }
 
+  //class methods
   void display()
   {
     for (int i=0; i<tiles.length; i++)
@@ -80,12 +83,12 @@ class Level
   }
 
   void updateLevel() {
-    //if player collides with exit
-    //id++
+    if (exit.collidingWithPlayer()==true) {
+      println("fuck yes");
+      weAreInLevel++;
+      // OR  id++;
+    }
   }
-
-  //can we put everything in the textfile? SO: monsters, skeletons, candy, tiles and exits?
-  //then: if (player collides with exit){level++ - OR weAreInLevel++?
 
   Tile[] GetTiles() {
     return tiles;

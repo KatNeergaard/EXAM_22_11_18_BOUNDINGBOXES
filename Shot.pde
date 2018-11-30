@@ -11,6 +11,7 @@ class Shot {
   int h = 35;
   int w = 35;
   boolean isOn = false;
+  int bullitSpeed=10; 
 
   //constructor
   Shot() {
@@ -38,8 +39,8 @@ class Shot {
   }
 
   void activateShot(int newPosX, int newPosY) {
-    xPos=newPosX+62;
-    yPos=newPosY+40;
+    xPos=newPosX+62; //change this to player width
+    yPos=newPosY+40; //change this to player hiegth/2
     isOn=true;
   }
 
@@ -49,7 +50,7 @@ class Shot {
       if (xPos>=width) {
         isOn=false;
       }
-      xPos++;
+      xPos=xPos+bullitSpeed;
     }
   }
 
@@ -68,6 +69,4 @@ class Shot {
   {
     return xPos;
   }
-
-  //collision detection with enemies and player
 }

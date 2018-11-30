@@ -32,11 +32,11 @@ class Exit {
       int playerH = 62;
       int playerW = 62;
       if (playerX+playerW>xPos) {
-        if ((playerY > yPos) && (playerY+playerH < yPos+exitHeigth)) {
+        //if ((playerY > yPos) && ((playerY+playerH) < (yPos+exitHeigth))) { //NB: THIS IS NOOOT WORKING!
           exitCollidingWithPlayer =  true;
           return true;
         }
-      }
+      //}
     }
     exitCollidingWithPlayer = false;
     return false;

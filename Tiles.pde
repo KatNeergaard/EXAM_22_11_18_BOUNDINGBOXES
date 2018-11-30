@@ -8,12 +8,6 @@ class Tile
   boolean isOn=false;
   boolean playerCollision=false;
   boolean collide=false;
-  Rectangle bbT;
-
-  Tile()
-  {
-    bbT = new Rectangle(xPos, yPos, tileWidth, tileHeight);
-  }
 
   void display()
   {
@@ -43,18 +37,12 @@ class Tile
       float playerY=players[i].getY();
       int playerH=62;
       int playerW=62;
-      
-      
-      Rectangle bb = players[i].boundingBox;
 
-      /*if ( bb.intersects(bbT)) { //collide with right side of tile
-        print(":OOOO");
-      }*/
       if ((playerX+playerW)>xPos && playerX<(xPos+tileWidth)) { //left side of tile
         if ((playerX+playerW) > yPos && (playerX)<(yPos+tileHeight)) {
-        //  collide=true;
-        //} else {
-        //  collide=false;
+          //  collide=true;
+          //} else {
+          //  collide=false;
         }
       }
     }

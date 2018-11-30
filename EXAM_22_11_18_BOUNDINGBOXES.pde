@@ -6,7 +6,7 @@ HEADER
 Player[] players = new Player[2];
 Shot[] shots = new Shot [50];
 Exit exit; 
-Level[] levels = new Level[5];
+Level[] levels = new Level[4];
 Candy[] candies = new Candy[50];
 Skeleton[] skeletons = new Skeleton[50];
 Monster[] monsters = new Monster[20];
@@ -37,7 +37,7 @@ void draw()
   if (gamestate==0) {  //gamestate 0 - startscreen and instructions
     showStartScreen();
   } 
-  if (gamestate==1) {  //gamestate 1 - playing
+  if (gamestate==1) { //gamestate 1 - playing
     displayBackground();
     showAndControlPlayer();
     displayAndMoveShots();
@@ -56,8 +56,8 @@ void keyPressed()
   for (int i = 0; i < players.length; i++)
   {
     players[i].keyWasPressed(key);
-    println(players[i].getClass());
-    checkCollide(players[i], players[i].getX(), players[i].getY());
+    //println(players[i].getClass());
+    //checkCollide(players[i], players[i].getX(), players[i].getY());
   }
   if (gamestate==2) {
     showGameOverScreen();
@@ -84,19 +84,19 @@ void keyReleased()
 
 //functions
 
-void checkCollide(Player player, int x, int y) {
-  Tile[] tiles = levels[weAreInLevel].GetTiles();
-  println(player, x, y);
-  for (int i = 0; i < tiles.length; i++) {
-    if (tiles[i].collide == true) {
+//void checkCollide(Player player, int x, int y) {
+//  Tile[] tiles = levels[weAreInLevel].GetTiles();
+//  println(player, x, y);
+//  for (int i = 0; i < tiles.length; i++) {
+//    if (tiles[i].collide == true) {
 
-      println(player.getX() > tiles[i].xPos && tiles[i].collide == true);
-      if (player.getX() > tiles[i].xPos && tiles[i].collide == true) {
-        player.stopMoving();
-      }
-    }
-  }
-}
+//      println(player.getX() > tiles[i].xPos && tiles[i].collide == true);
+//      if (player.getX() > tiles[i].xPos && tiles[i].collide == true) {
+//        player.stopMoving();
+//      }
+//    }
+//  }
+//}
 
 void setControls() {
   controls[0] = 'L';
@@ -134,12 +134,11 @@ void displayAndMoveShots() {
 void showAndUpdateLevels() {
   for (int i=0; i<levels.length; i++) {
     levels[weAreInLevel].display(); //displays the current level
-    levels[i].updateLevel(); //not working yet
+    levels[i].updateLevel();
   }
 }
 
 void displayBackground() {
-  imageMode(CORNER);
   image(floor, 0, 0, 800, 400);
 }
 
@@ -147,7 +146,7 @@ void loadImages() {
   floor = loadImage("floor.png"); //loading the background
   instructions = loadImage("instructions.png"); //loading the instructions-screen
   menu = loadImage("startmenu.png");
-  //gameOver = load image here
+  gameOver = loadImage("gameover.png");
   //highScore = load image here
 }
 
@@ -166,7 +165,7 @@ void setupLevels() {
 }
 
 void showGameOverScreen() {
-  //load gameoverscreen image here
+  image(gameOver, 0, 0, 800, 400);
   if (keyCode=='V') {
     gamestate=0;
     //remember to call this in keypressed with the right gamestate criteria
@@ -196,7 +195,6 @@ void showHighScoreList() {
   //functions
   //keyCodes - change gamestate to 0 - remember to call this in keypressed with the right gamestate criteria
 }
-
 
 /*
 GAME_STATES OVERVIEW
