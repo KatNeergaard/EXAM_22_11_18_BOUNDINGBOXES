@@ -133,13 +133,25 @@ class Player {
     image(cat, xPos, yPos, 75, 75);
   }
 
-  int getX() //gets the x position so we can call it in another class
+
+//get functions. gets the position, width and heighth from the player clas,s so these can be used for collsion detection in other classes.
+  int getX() 
   {
     return xPos;
   }
 
-  int getY() //gets the x position so we can call it in another class
+  int getY() 
   {
     return yPos;
+  }
+  
+  int getH() 
+  {
+    return h;
+  }
+  
+    int getW() //gets the x position so we can call it in another class
+  {
+    return w;
   }
 }

@@ -133,7 +133,7 @@ void displayAndMoveShots() {
 
 void showAndUpdateLevels() {
   for (int i=0; i<levels.length; i++) {
-    levels[weAreInLevel].display(); //displays the current level
+  //  levels[weAreInLevel].display(); //displays the current level - ERROR: ArrayIndexOutOfBoundsException 4. 
     levels[i].updateLevel();
   }
 }
