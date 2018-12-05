@@ -1,25 +1,23 @@
-
 class Player {
 
   //class variables
   int durationOneFrame = 100; //in milliseconds
   int frame = 0;
-  int frameMax = 7;
+  int frameMax = 6;
   int ticksLast = millis();
   PImage spriteSheetCat;
-  PImage spriteSheet;
   boolean holdRight = false;
   boolean holdLeft = false;
   boolean holdUp = false;
   boolean holdDown = false;
   boolean playerIsShooting = false;
-  int h = 62; //player heighth
-  int w = 62; // player width
+  int h = 30; //player heighth
+  int w = 20; // player width
   int xPos=0;
-  int yPos=0;
+  int yPos=255;
   int pyWas;
   int pxWas;
-  int playerid;
+  boolean isOn = false;
   char[] controls = new char[10];
   int life = 3; //should -1 upon collsion with enenmy. when life=0 - gameover!
 
@@ -32,13 +30,29 @@ class Player {
   //class methods
   void display() //how do I place the players in different places in the easiets way?
   {
-    loadPlayer();
-    timeFix();
+    if (isOn) {
+      loadPlayer();
+      timeFix();
+    }
+  }
+
+  void addPlayer(boolean s) {
+    isOn=s;
   }
 
   void setControls(char c[])
   {
     controls = c;
+  }
+
+  void loadPlayer() { //displays frame from sprite sheet with Magic Numbers (frame 0 starts at (64, 64) with a size of 64x64 pixels):
+    PImage cat = spriteSheetCat.get(w + (frame * 62), 85, w, h); //get() is a Processing function to access a (e.g. rectangular) part of a pImage.
+    image(cat, xPos, yPos, w, h);
+  }
+
+  void resetPlayerCoordinate() {
+    xPos=0;
+    yPos=250;
   }
 
   void keyWasPressed(char c) {
@@ -79,7 +93,7 @@ class Player {
     }
   }
 
-  void handleKeyStates() {
+  void movePlayer() {
     pxWas = xPos; //pxWas being a saved value for where the player was
     pyWas = yPos;
     int playerSpeed = 3;
@@ -88,8 +102,8 @@ class Player {
       xPos=xPos+playerSpeed;
     }
     if (holdLeft) {
+      //imageFlipped(cat, pxWas, pyWas);
       xPos=xPos-playerSpeed;
-      ;
     }
     if (holdUp) {
       yPos=yPos-playerSpeed;
@@ -97,21 +111,20 @@ class Player {
     if (holdDown) {
       yPos=yPos+playerSpeed;
     }
-    if (yPos<0) {
-      yPos=pyWas; //stop moving
-    }
+    stopMoving();
+    //if (yPos<0) {
+    // yPos=pyWas; //stop moving works here
+    //}
   }
 
-  //void stopMoving() {
-  //  for(int i=0; i< tile[i].length; i++){
-  //  if(tiles.checkCollisionWithPlayer()==true)
-  //  xPos= pxWas;
-  //  println("stop");
-  //}
-  //}
-
-  void reset()
-  {
+  void stopMoving() {
+    for (int i=0; i< tiles.length; i++) {
+      if (tiles[i].checkPlayerAndTileCollision()==true) {
+        xPos=pxWas; //pxWas being a saved value for where the player was
+        yPos=pyWas;
+        println("stop");
+      }
+    }
   }
 
   void timeFix() {
@@ -127,14 +140,18 @@ class Player {
     }
   }
 
-  void loadPlayer() {
-    //displays frame from sprite sheet with Magic Numbers (frame 0 starts at (64, 64) with a size of 64x64 pixels):
-    PImage cat = spriteSheetCat.get(w + (frame * w), h, w, h); //get() is a Processing function to access a (e.g. rectangular) part of a pImage.
-    image(cat, xPos, yPos, 75, 75);
-  }
+  //void imageFlipped(PImage cat, int pxWas, int pyWas) {
+  //  pxWas = xPos; //pxWas being a saved value for where the player was
+  //  pyWas = yPos;
+  //  println(X);
+  //  pushMatrix();
+  //  //  translate(cat.width,0);
+  //  scale( -1, 1 ); 
+  //  image(cat, pxWas, pyWas, w, h);
+  //  popMatrix();
+  //} 
 
-
-//get functions. gets the position, width and heighth from the player clas,s so these can be used for collsion detection in other classes.
+  //get functions. gets the position, width and heighth from the player clas,s so these can be used for collsion detection in other classes.
   int getX() 
   {
     return xPos;
@@ -144,13 +161,13 @@ class Player {
   {
     return yPos;
   }
-  
+
   int getH() 
   {
     return h;
   }
-  
-    int getW() //gets the x position so we can call it in another class
+
+  int getW() 
   {
     return w;
   }

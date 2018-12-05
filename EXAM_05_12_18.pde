@@ -5,11 +5,12 @@ HEADER
 
 Player[] players = new Player[2];
 Shot[] shots = new Shot [50];
-Exit exit; 
-Level[] levels = new Level[4];
-Candy[] candies = new Candy[50];
+Level[] levels = new Level[5];
+//Candy[] candies = new Candy[50];
 Skeleton[] skeletons = new Skeleton[50];
-Monster[] monsters = new Monster[20];
+//Monster[] monsters = new Monster[20];
+//Exit exit; 
+Tile[] tiles = new Tile [512];
 
 //variables
 char[] controls = new char[5];
@@ -18,46 +19,51 @@ PImage floor;
 PImage instructions;
 PImage menu;
 PImage gameOver;
-PImage highSCore;
+PImage highScore;
 int weAreInLevel=0;
-int life=3;
+int life=3; //should this be here or in player class?
 int gamestate=0;
+int playerCount=0;
+int score = 0;
 
 void setup()
 {
   size(800, 400);
   loadImages();
+  setupPlayer();
   setControls(); //setting the controls for the players
   setupLevels();
   setupShots();
+  for (int i=0; i<tiles.length; i++)
+  {
+    tiles[i] = new Tile();
+  }
 }
 
 void draw()
 {
+  imageMode(CORNER);
   if (gamestate==0) {  //gamestate 0 - startscreen and instructions
     showStartScreen();
   } 
   if (gamestate==1) { //gamestate 1 - playing
     displayBackground();
-    showAndControlPlayer();
+    showAndControlPlayers();
     displayAndMoveShots();
     showAndUpdateLevels();
-  }
-  if (gamestate==2) {
+    displayScoreAndLife();
+  } else if (gamestate==2) {
     showGameOverScreen();
-  }
-  if (gamestate==3) {
-    showHighScoreList();
+  } else if (gamestate==3) {
+    endGame();
   }
 }
 
 void keyPressed()
 {
-  for (int i = 0; i < players.length; i++)
+  for (int i = 0; i < playerCount; i++)
   {
     players[i].keyWasPressed(key);
-    //println(players[i].getClass());
-    //checkCollide(players[i], players[i].getX(), players[i].getY());
   }
   if (gamestate==2) {
     showGameOverScreen();
@@ -65,11 +71,14 @@ void keyPressed()
   if (gamestate==0) {
     showStartScreen();
   }
+  if (gamestate==3) {
+    endGame();
+  }
 }
 
 void keyReleased()
 {
-  for (int i = 0; i < players.length; i++)
+  for (int i = 0; i < playerCount; i++)
   {
     players[i].keyWasReleased(key);
   }
@@ -79,25 +88,18 @@ void keyReleased()
   if (gamestate==0) {
     showStartScreen();
   }
+  if (gamestate==3) {
+    endGame();
+  }
 }
 
-
-//functions
-
-//void checkCollide(Player player, int x, int y) {
-//  Tile[] tiles = levels[weAreInLevel].GetTiles();
-//  println(player, x, y);
-//  for (int i = 0; i < tiles.length; i++) {
-//    if (tiles[i].collide == true) {
-
-//      println(player.getX() > tiles[i].xPos && tiles[i].collide == true);
-//      if (player.getX() > tiles[i].xPos && tiles[i].collide == true) {
-//        player.stopMoving();
-//      }
-//    }
-//  }
-//}
-
+//setup functions
+void setupPlayer() {
+  for (int i = 0; i < players.length; i++)
+  {
+    players[i] = new Player();
+  }
+}
 void setControls() {
   controls[0] = 'L';
   controls[1] = 'J';
@@ -111,30 +113,8 @@ void setControls() {
   controls1[4] = 'S';
   for (int i = 0; i < players.length; i++)
   {
-    players[i] = new Player();
-  }
-  players[0].setControls(controls);
-  players[1].setControls(controls1);
-}
-
-void showAndControlPlayer() {
-  for (int i=0; i<players.length; i++) {
-    players[0].display();
-    players[i].handleKeyStates();
-  }
-}
-
-void displayAndMoveShots() {
-  for (int i=0; i<shots.length; i++) {
-    shots[i].display();
-    shots[i].move();
-  }
-}
-
-void showAndUpdateLevels() {
-  for (int i=0; i<levels.length; i++) {
-  //  levels[weAreInLevel].display(); //displays the current level - ERROR: ArrayIndexOutOfBoundsException 4. 
-    levels[i].updateLevel();
+    players[0].setControls(controls);
+    players[1].setControls(controls1);
   }
 }
 
@@ -147,7 +127,7 @@ void loadImages() {
   instructions = loadImage("instructions.png"); //loading the instructions-screen
   menu = loadImage("startmenu.png");
   gameOver = loadImage("gameover.png");
-  //highScore = load image here
+  highScore = loadImage("highscore.png");
 }
 
 void setupShots() {
@@ -164,18 +144,59 @@ void setupLevels() {
   }
 }
 
+//functions called in draw
+void showAndControlPlayers() {
+  for (int i=0; i<playerCount; i++) {
+    players[i].addPlayer(true);
+    players[i].display();
+    players[i].movePlayer();
+  }
+}
+
+void displayAndMoveShots() {
+  for (int i=0; i<shots.length; i++) {
+    shots[i].display();
+    shots[i].move();
+  }
+}
+
+void showAndUpdateLevels() {
+  for (int i=0; i<levels.length; i++) {
+    if (weAreInLevel < levels.length) {
+      levels[weAreInLevel].display(); //displays the current level
+      levels[i].checkAllCollisions();
+    } else {
+      gamestate=3;
+    }
+  }
+}
+
 void showGameOverScreen() {
   image(gameOver, 0, 0, 800, 400);
+  //EVERTHING SHOULD BE RESET HERE!!!!
   if (keyCode=='V') {
     gamestate=0;
-    //remember to call this in keypressed with the right gamestate criteria
   }
+}
+
+void endGame() {
+  image(highScore, 0, 0, 800, 400);
+  //EVERTHING SHOULD BE RESET HERE!!!
+  if (keyCode=='N') {
+    gamestate=0;
+  }
+}
+
+void displayScoreAndLife() {
+  textSize(20);
+  fill(0);
+  text("SCORE: "+score, 655, 20);
+  text("LIFE: "+life, 10, 20);
 }
 
 void showStartScreen() {
   image(menu, 0, 0, 800, 400);
   if (keyCode=='V') {
-    // gamestate=4;
     image(instructions, 0, 0, 800, 400);
   }
   if (keyCode=='N') {
@@ -183,27 +204,10 @@ void showStartScreen() {
   }
   if (keyCode=='B') {
     gamestate=1;
+    playerCount=1;
   }
   if (keyCode=='C') {
     gamestate=1;
-    players[1].display();
+    playerCount=2;
   }
 }
-
-void showHighScoreList() {
-  //load image 
-  //functions
-  //keyCodes - change gamestate to 0 - remember to call this in keypressed with the right gamestate criteria
-}
-
-/*
-GAME_STATES OVERVIEW
- //gamestate 0 = start menu
- //gamestate 1 = playing game
- //gamestate 2 = gameOver
- //gamestate 3 = highscore
- things to remember: 
- - should be in keypressed. 
- - should take 1+2 player into account
- - should be resetable 
- */

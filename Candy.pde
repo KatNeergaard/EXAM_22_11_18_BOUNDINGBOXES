@@ -6,6 +6,8 @@ class Candy {
   PImage candy;
   int id;
   boolean isOn=false;
+  int candyWidth = 20;
+  int candyHigth = 20;
 
   //constructor
   Candy() {
@@ -15,28 +17,38 @@ class Candy {
 
   //class methods
   void display() {
-    image(candy, xPos, yPos, 20, 20);
+    if (isOn) {
+      image(candy, xPos, yPos, candyWidth, candyHigth);
+    }
   }
 
-  void showCandy(int posX, int posY) {
+  void addCandy(int posX, int posY, boolean s) {
     xPos=posX;
     yPos=posY;
-    isOn=true;
+    isOn=s;
   }
 
-  void collisionDetection() {
-    //do a collision detection with player here - if collision - player gets a score
+  //collision detection - if collision between player and candy - player scores
+  boolean areYouHit() {
+    if (!isOn) { 
+      return false;
+    }
+    for (int i = 0; i < playerCount; i++) { 
+      //getting the variables needed
+      int playerX=players[i].getX();
+      int playerY=players[i].getY();
+      int playerH=players[i].getH();
+      int playerW=players[i].getW();
+      if ((playerX+playerW>= xPos) &&
+        (playerX < xPos + candyWidth) &&
+        (playerY+playerH >= yPos) &&
+        (playerY + playerH < yPos + candyHigth))
+      {
+        score+=10; //reaction to collision
+        addCandy(0, 0, false);
+        return true;
+      }
+    }
+    return false;
   }
-
-  //boolean checkCollisionWithPlayer() {
-  //  for (int i=0; i<players.length; i++) {
-  //    int playerX=players[i].getX();
-  //    int playerY=players[i].getY();
-  //    int playerH=62;
-  //    int playerW=62;
-      
-  //    if ((playerX+playerW)>xPos && (playerX)<(xPos+tileWidth))  //left side of candy
-  //  }
-  //   return true; 
-  //  }
-  }
+}
