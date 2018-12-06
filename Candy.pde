@@ -51,4 +51,8 @@ class Candy {
     }
     return false;
   }
+  
+  void resetCandy(){
+    isOn=false; 
+  }
 }

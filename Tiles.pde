@@ -11,7 +11,8 @@ class Tile
   void display()
   {
     //if (isOn){
-    fill(255, 255, 0);
+    stroke(100,50);
+    fill(255, 255, 0,50);
     rect(xPos, yPos, tileWidth, tileHeight);
     //}
   }

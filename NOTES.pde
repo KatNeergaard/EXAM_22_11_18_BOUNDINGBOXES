@@ -13,7 +13,7 @@ CURRENT BUGS:
 - it seems like the player is colliding with tiles and candies that are not being displayed… Don't know if it's due to size...
 
 SPRITESHEETS
-- Turning spreadsheets around sp the player/monsters can face left 
+- Turning spreadsheets around so the player/monsters can face left 
 - and using different parts of the sheets at different times - i.e. for attacking, dying etc
 - Do what we did with the cat - find the right pixelsize - don’t use w for the frame*W 
 
@@ -27,7 +27,7 @@ COLLISION DETECTION
 - IF 2-PLAYER: they both need to collide with the exit before the level changes. 
 JESPERS suggestion: make an boolean array - when it is true that BOTH players have collided - then change + remember: use playercount when going through player array
 
-ENEMIE BEHAVIOR
+ENEMY BEHAVIOR
 - Chasing
 - Shooting
 - Attacking

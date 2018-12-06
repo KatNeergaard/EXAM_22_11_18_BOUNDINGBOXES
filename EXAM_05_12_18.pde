@@ -55,7 +55,9 @@ void draw()
   } else if (gamestate==2) {
     showGameOverScreen();
   } else if (gamestate==3) {
-    endGame();
+    endGameScreen();
+    //load HighSCore list
+    //RESETTING EVERYTHING
   }
 }
 
@@ -72,7 +74,7 @@ void keyPressed()
     showStartScreen();
   }
   if (gamestate==3) {
-    endGame();
+    endGameScreen();
   }
 }
 
@@ -89,7 +91,7 @@ void keyReleased()
     showStartScreen();
   }
   if (gamestate==3) {
-    endGame();
+    endGameScreen();
   }
 }
 
@@ -173,19 +175,26 @@ void showAndUpdateLevels() {
 
 void showGameOverScreen() {
   image(gameOver, 0, 0, 800, 400);
-  //EVERTHING SHOULD BE RESET HERE!!!!
   if (keyCode=='V') {
     gamestate=0;
   }
 }
 
-void endGame() {
+void endGameScreen() {
   image(highScore, 0, 0, 800, 400);
-  //EVERTHING SHOULD BE RESET HERE!!!
   if (keyCode=='N') {
     gamestate=0;
   }
 }
+
+void resetGame(){
+//shots?
+//players
+//score
+//life
+//in levels we reset: candy, exits, levels, skeletons, tiles
+}
+
 
 void displayScoreAndLife() {
   textSize(20);
