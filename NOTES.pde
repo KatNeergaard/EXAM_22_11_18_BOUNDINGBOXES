@@ -9,7 +9,7 @@ SPRITESHEETS AND IMAGES
 - Use another image for the exit!
 
 RESETTING
-- ALMOST DONE - aka the game is re-playable!
+- ALMOST DONE - aka the game is re-playable! - BUT SOME OF THE RE-SET FUNCTIONS SEEM BUGGY....
 - Doublecheck if everything stops by println or something
 - Resetting the player requires some extra thought - look at notes in comments in the class
 
