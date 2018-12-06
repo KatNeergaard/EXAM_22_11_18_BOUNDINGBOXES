@@ -7,10 +7,10 @@ Player[] players = new Player[2];
 Shot[] shots = new Shot [50];
 Level[] levels = new Level[5];
 //Candy[] candies = new Candy[50];
-Skeleton[] skeletons = new Skeleton[50];
+//Skeleton[] skeletons = new Skeleton[50];
 //Monster[] monsters = new Monster[20];
 //Exit exit; 
-Tile[] tiles = new Tile [512];
+//Tile[] tiles = new Tile [512];
 
 //variables
 char[] controls = new char[5];
@@ -21,7 +21,7 @@ PImage menu;
 PImage gameOver;
 PImage highScore;
 int weAreInLevel=0;
-int life=3; //should this be here or in player class?
+int life=5; //should -1 upon collsion with enenmy or shots. when life=0 player is gameover
 int gamestate=0;
 int playerCount=0;
 int score = 0;
@@ -34,10 +34,6 @@ void setup()
   setControls(); //setting the controls for the players
   setupLevels();
   setupShots();
-  for (int i=0; i<tiles.length; i++)
-  {
-    tiles[i] = new Tile();
-  }
 }
 
 void draw()
@@ -48,16 +44,22 @@ void draw()
   } 
   if (gamestate==1) { //gamestate 1 - playing
     displayBackground();
+    showAndUpdateLevels();
     showAndControlPlayers();
     displayAndMoveShots();
-    showAndUpdateLevels();
     displayScoreAndLife();
-  } else if (gamestate==2) {
+    for (int i=0; i<playerCount; i++) { //counts the live and check if the player(s) are gameover
+      if (life==0) {
+        gamestate=2;
+      }
+    }
+  } else if (gamestate==2) { //gamestate 2 - gameOver
     showGameOverScreen();
-  } else if (gamestate==3) {
+    resetGame();
+  } else if (gamestate==3) { //gamestate 3 - game ends aka player gets through all levels and sees their score
     endGameScreen();
-    //load HighSCore list
-    //RESETTING EVERYTHING
+    //LOAD HIGHSCORE LIST HERE
+    resetGame();
   }
 }
 
@@ -175,7 +177,7 @@ void showAndUpdateLevels() {
 
 void showGameOverScreen() {
   image(gameOver, 0, 0, 800, 400);
-  if (keyCode=='V') {
+  if (keyCode=='N') {
     gamestate=0;
   }
 }
@@ -187,14 +189,20 @@ void endGameScreen() {
   }
 }
 
-void resetGame(){
-//shots?
-//players
-//score
-//life
-//in levels we reset: candy, exits, levels, skeletons, tiles
+void resetGame() { //Some objects might be off already due to other circumstances, but if not, this function take scare of it. The shots turn themselves off if > X or hit somehting
+  for (int i=0; i<playerCount; i++) { //turns player of
+    players[i].isOn=false;
+    players[i].resetPlayerCoordinate();
+    //players[i].stopMoving(); //PLAYER STOP MOVING should include speed - see notes in player class
+  }
+  for (int i=0; i<levels.length; i++) { //resets candy, exits, levels, skeletons, tiles if weAreLevel is more than 5.
+    levels[i].resetGame();
+  }
+  score=0;
+  life=5;
+  weAreInLevel=0;
+  playerCount=0;
 }
-
 
 void displayScoreAndLife() {
   textSize(20);

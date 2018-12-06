@@ -98,4 +98,26 @@ class Level
       }
     }
   }
+
+  void resetGame() {
+    if (weAreInLevel > levels.length){
+      for (int i=0; i<tiles.length; i++)
+      {
+        tiles[i].isOn=false;
+      }
+      for (int i=0; i<candies.length; i++)
+      {
+        candies[i].isOn=false;
+      }
+      for (int i=0; i<skeletons.length; i++)
+      {
+        skeletons[i].isOn=false;
+      }
+      for (int i=0; i<monsters.length; i++) {
+        monsters[i].isOn=false;
+      }
+      exit.isOn=false;
+      ;
+    }
+  }
 }

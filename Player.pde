@@ -19,7 +19,6 @@ class Player {
   int pxWas;
   boolean isOn = false;
   char[] controls = new char[10];
-  int life = 3; //should -1 upon collsion with enenmy. when life=0 - gameover!
 
   //constructor
   Player()
@@ -53,6 +52,10 @@ class Player {
   void resetPlayerCoordinate() {
     xPos=0;
     yPos=250;
+    holdRight = false; //maybe these should be in stop moving??
+    holdLeft = false;
+    holdUp = false;
+    holdDown = false;
   }
 
   void keyWasPressed(char c) {
@@ -111,21 +114,22 @@ class Player {
     if (holdDown) {
       yPos=yPos+playerSpeed;
     }
-    stopMoving();
     //if (yPos<0) {
     // yPos=pyWas; //stop moving works here
     //}
   }
 
-  void stopMoving() {
-    for (int i=0; i< tiles.length; i++) {
-      if (tiles[i].checkPlayerAndTileCollision()==true) {
-        xPos=pxWas; //pxWas being a saved value for where the player was
-        yPos=pyWas;
-        println("stop");
-      }
-    }
-  }
+  //void stopMoving() {
+  //  //for (int i=0; i< tiles.length; i++) {
+  //  //  if (tiles[i].checkPlayerAndTileCollision()==true) {
+  //      xPos=pxWas; //pxWas being a saved value for where the player was
+  //      yPos=pyWas;
+  //      println("stop");
+  //SPEED should also re reset?
+  //or all the booleans related to moving that are now in resetPlayerCoordinate?
+  //    }
+  //  }
+  //}
 
   void timeFix() {
     int delta = millis() - ticksLast;
