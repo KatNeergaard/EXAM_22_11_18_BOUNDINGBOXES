@@ -1,7 +1,7 @@
-
 class Level
 {
   int id=0;
+  int gridSize=25;
   Tile[] tiles = new Tile[512];
   Candy[] candies = new Candy[50];
   Skeleton[] skeletons = new Skeleton[50];
@@ -12,22 +12,16 @@ class Level
   Level(int l)
   {
     id=l;
-    //load level id
-    String[] lines = loadStrings("map"+id+".txt");
+    String[] lines = loadStrings("map"+id+".txt"); //load level id
     //instatiating the classes needed
     exit = new Exit();
-    for (int i=0; i<tiles.length; i++)
-    {
+    for (int i=0; i<tiles.length; i++) {
       tiles[i] = new Tile();
     }
-
-    for (int i=0; i<candies.length; i++)
-    {
+    for (int i=0; i<candies.length; i++) {
       candies[i] = new Candy();
     }
-
-    for (int i=0; i<skeletons.length; i++)
-    {
+    for (int i=0; i<skeletons.length; i++) {
       skeletons[i] = new Skeleton();
     }
     for (int i=0; i<monsters.length; i++) {
@@ -42,19 +36,23 @@ class Level
       for (int j=0; j<lines[i].length(); j++) //goes through rows
       {
         if (lines[i].charAt(j)=='1') {
-          tiles[currentTile].showTile(j*25, i*25);
-          tiles[currentTile].collide=true;
+          tiles[currentTile].addTile(j*gridSize, i*gridSize, true);
+          //tiles[currentTile].collide=true;
           currentTile++;
+          
         } else if (lines[i].charAt(j)=='2') {
-          candies[currentCandy].showCandy(j*25, i*25);
+          candies[currentCandy].addCandy(j*gridSize, i*gridSize, true);
           currentCandy++;
+          
         } else if (lines[i].charAt(j)=='3') {
-          skeletons[currentSkeletons].showSkeleton(j*25, i*25);
+          skeletons[currentSkeletons].addSkeleton(j*gridSize, i*gridSize, true);
           currentSkeletons++;
+          
         } else if (lines[i].charAt(j)=='5') {
-          exit.showExit(j*25, i*25);
+          exit.addExit(j*gridSize, i*gridSize, true);
+          
         } else if (lines[i].charAt(j)=='4') {
-          monsters[currentMonsters].showMonster(j*25, i*25);
+          monsters[currentMonsters].addMonster(j*gridSize, i*gridSize, true);
           currentMonsters++;
         }
       }
@@ -64,33 +62,46 @@ class Level
   //class methods
   void display()
   {
-    for (int i=0; i<tiles.length; i++)
-    {
+    for (int i=0; i<tiles.length; i++){
       tiles[i].display();
     }
-    for (int i=0; i<candies.length; i++)
-    {
+    for (int i=0; i<candies.length; i++) {
       candies[i].display();
     }
-    for (int i=0; i<skeletons.length; i++)
-    {
+    for (int i=0; i<skeletons.length; i++) {
       skeletons[i].display();
     }
     for (int i=0; i<monsters.length; i++) {
       monsters[i].display();
+      monsters[i].moveTowardsPlayer();
     }
     exit.display();
   }
 
-  void updateLevel() {
+  void checkAllCollisions() {
     if (exit.collidingWithPlayer()==true) {
-      println("fuck yes");
+      println("EXIT WORKS");
       weAreInLevel++;
-      // OR  id++;
+      
+      for (int i=0; i<players.length; i++) {
+        players[i].resetPlayerCoordinate();
+      }
+    }
+      for (int i=0; i <skeletons.length; i++) {
+        if (skeletons[i].areYouHit()==true) {
+          println("shooting skeletons WORKS");
+          //What could we insert instead of printing? WOuld it make sense to command the skeleton to dissapear here?
+        }
+      }
+      for (int i=0; i <candies.length; i++) {
+        if (candies[i].areYouHit()==true) {
+          println("CANDIES WORKS");
+        }
+      }
+      for (int i=0; i <tiles.length; i++) {
+        if (tiles[i].checkPlayerAndTileCollision()==true) {
+          println("colliding with tile "+i);
+        }
+      }
     }
   }
-
-  Tile[] GetTiles() {
-    return tiles;
-  }
-}
