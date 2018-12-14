@@ -1,4 +1,3 @@
-
 class Tile
 {
   int xPos=0;
@@ -11,18 +10,18 @@ class Tile
 
   void display()
   {
-    if (isOn)
-    {
-      fill(255, 255, 0);
-      rect(xPos, yPos, tileWidth, tileHeight);
-    }
+    //if (isOn){
+    stroke(100,50);
+    fill(255, 255, 0,50);
+    rect(xPos, yPos, tileWidth, tileHeight);
+    //}
   }
 
-  void showTile(int posX, int posY)
+  void addTile(int posX, int posY, boolean s)
   {
     xPos=posX;
     yPos=posY;
-    isOn=true;
+    isOn=s;
   }
 
   void switchOff()
@@ -30,31 +29,25 @@ class Tile
     isOn=false;
   }
 
-  //collision detection 
-  boolean checkCollisionWithPlayer() {
-    for (int i=0; i<players.length; i++) {
-      float playerX=players[i].getX();
-      float playerY=players[i].getY();
-      int playerH=62;
-      int playerW=62;
-
-      if ((playerX+playerW)>xPos && playerX<(xPos+tileWidth)) { //left side of tile
-        if ((playerX+playerW) > yPos && (playerX)<(yPos+tileHeight)) {
-          //  collide=true;
-          //} else {
-          //  collide=false;
-        }
+  boolean checkPlayerAndTileCollision() {
+    if (!isOn) { 
+      return false;
+    }
+    for (int i=0; i<playerCount; i++) {
+      int playerX = players[i].getX();
+      int playerY = players[i].getY();
+      int playerH = players[i].getH();
+      int playerW = players[i].getW();
+      if ((playerX+playerW>=xPos) &&
+        (playerX < xPos+tileWidth) &&
+        (playerY+playerH >= yPos) &&
+        (playerY < yPos+tileHeight)) 
+      { 
+        //switchOff();
+        //players[i].stopMoving();
+        return true;
       }
     }
-    return collide;
-  }
-
-  void test() {
-    // this.xPos, this.yPos   can give the X and Y coord here
-    if (checkCollisionWithPlayer()) {
-      //println("YES");
-    } else {
-      //println("NO");
-    }
+    return false;
   }
 }

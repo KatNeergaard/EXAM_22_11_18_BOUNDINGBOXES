@@ -1,15 +1,18 @@
 /*
 HEADER
  REMEMBER TO CREDIT THE CREATORS OF SPRITESHEETS ETC
+ TEST GITHUB...
+ TEST GITHUB KAROLINEFO
  */
 
 Player[] players = new Player[2];
 Shot[] shots = new Shot [50];
-Exit exit; 
-Level[] levels = new Level[4];
-Candy[] candies = new Candy[50];
-Skeleton[] skeletons = new Skeleton[50];
-Monster[] monsters = new Monster[20];
+Level[] levels = new Level[5];
+//Candy[] candies = new Candy[50];
+//Skeleton[] skeletons = new Skeleton[50];
+//Monster[] monsters = new Monster[20];
+//Exit exit; 
+//Tile[] tiles = new Tile [512];
 
 //variables
 char[] controls = new char[5];
@@ -18,15 +21,18 @@ PImage floor;
 PImage instructions;
 PImage menu;
 PImage gameOver;
-PImage highSCore;
+PImage highScore;
 int weAreInLevel=0;
-int life=3;
+int life=5; //should -1 upon collsion with enenmy or shots. when life=0 player is gameover
 int gamestate=0;
+int playerCount=0;
+int score = 0;
 
 void setup()
 {
   size(800, 400);
   loadImages();
+  setupPlayer();
   setControls(); //setting the controls for the players
   setupLevels();
   setupShots();
@@ -34,30 +40,36 @@ void setup()
 
 void draw()
 {
+  imageMode(CORNER);
   if (gamestate==0) {  //gamestate 0 - startscreen and instructions
     showStartScreen();
   } 
   if (gamestate==1) { //gamestate 1 - playing
     displayBackground();
-    showAndControlPlayer();
-    displayAndMoveShots();
     showAndUpdateLevels();
-  }
-  if (gamestate==2) {
+    showAndControlPlayers();
+    displayAndMoveShots();
+    displayScoreAndLife();
+    for (int i=0; i<playerCount; i++) { //counts the live and check if the player(s) are gameover
+      if (life==0) {
+        gamestate=2;
+      }
+    }
+  } else if (gamestate==2) { //gamestate 2 - gameOver
     showGameOverScreen();
-  }
-  if (gamestate==3) {
-    showHighScoreList();
+    resetGame();
+  } else if (gamestate==3) { //gamestate 3 - game ends aka player gets through all levels and sees their score
+    endGameScreen();
+    //LOAD HIGHSCORE LIST HERE
+    resetGame();
   }
 }
 
 void keyPressed()
 {
-  for (int i = 0; i < players.length; i++)
+  for (int i = 0; i < playerCount; i++)
   {
     players[i].keyWasPressed(key);
-    //println(players[i].getClass());
-    //checkCollide(players[i], players[i].getX(), players[i].getY());
   }
   if (gamestate==2) {
     showGameOverScreen();
@@ -65,11 +77,14 @@ void keyPressed()
   if (gamestate==0) {
     showStartScreen();
   }
+  if (gamestate==3) {
+    endGameScreen();
+  }
 }
 
 void keyReleased()
 {
-  for (int i = 0; i < players.length; i++)
+  for (int i = 0; i < playerCount; i++)
   {
     players[i].keyWasReleased(key);
   }
@@ -79,25 +94,18 @@ void keyReleased()
   if (gamestate==0) {
     showStartScreen();
   }
+  if (gamestate==3) {
+    endGameScreen();
+  }
 }
 
-
-//functions
-
-//void checkCollide(Player player, int x, int y) {
-//  Tile[] tiles = levels[weAreInLevel].GetTiles();
-//  println(player, x, y);
-//  for (int i = 0; i < tiles.length; i++) {
-//    if (tiles[i].collide == true) {
-
-//      println(player.getX() > tiles[i].xPos && tiles[i].collide == true);
-//      if (player.getX() > tiles[i].xPos && tiles[i].collide == true) {
-//        player.stopMoving();
-//      }
-//    }
-//  }
-//}
-
+//setup functions
+void setupPlayer() {
+  for (int i = 0; i < players.length; i++)
+  {
+    players[i] = new Player();
+  }
+}
 void setControls() {
   controls[0] = 'L';
   controls[1] = 'J';
@@ -111,30 +119,8 @@ void setControls() {
   controls1[4] = 'S';
   for (int i = 0; i < players.length; i++)
   {
-    players[i] = new Player();
-  }
-  players[0].setControls(controls);
-  players[1].setControls(controls1);
-}
-
-void showAndControlPlayer() {
-  for (int i=0; i<players.length; i++) {
-    players[0].display();
-    players[i].handleKeyStates();
-  }
-}
-
-void displayAndMoveShots() {
-  for (int i=0; i<shots.length; i++) {
-    shots[i].display();
-    shots[i].move();
-  }
-}
-
-void showAndUpdateLevels() {
-  for (int i=0; i<levels.length; i++) {
-  //  levels[weAreInLevel].display(); //displays the current level - ERROR: ArrayIndexOutOfBoundsException 4. 
-    levels[i].updateLevel();
+    players[0].setControls(controls);
+    players[1].setControls(controls1);
   }
 }
 
@@ -147,7 +133,7 @@ void loadImages() {
   instructions = loadImage("instructions.png"); //loading the instructions-screen
   menu = loadImage("startmenu.png");
   gameOver = loadImage("gameover.png");
-  //highScore = load image here
+  highScore = loadImage("highscore.png");
 }
 
 void setupShots() {
@@ -164,18 +150,72 @@ void setupLevels() {
   }
 }
 
+//functions called in draw
+void showAndControlPlayers() {
+  for (int i=0; i<playerCount; i++) {
+    players[i].addPlayer(true);
+    players[i].display();
+    players[i].movePlayer();
+  }
+}
+
+void displayAndMoveShots() {
+  for (int i=0; i<shots.length; i++) {
+    shots[i].display();
+    shots[i].move();
+  }
+}
+
+void showAndUpdateLevels() {
+  for (int i=0; i<levels.length; i++) {
+    if (weAreInLevel < levels.length) {
+      levels[weAreInLevel].display(); //displays the current level
+      levels[i].checkAllCollisions();
+    } else {
+      gamestate=3;
+    }
+  }
+}
+
 void showGameOverScreen() {
   image(gameOver, 0, 0, 800, 400);
-  if (keyCode=='V') {
+  if (keyCode=='N') {
     gamestate=0;
-    //remember to call this in keypressed with the right gamestate criteria
   }
+}
+
+void endGameScreen() {
+  image(highScore, 0, 0, 800, 400);
+  if (keyCode=='N') {
+    gamestate=0;
+  }
+}
+
+void resetGame() { //Some objects might be off already due to other circumstances, but if not, this function take scare of it. The shots turn themselves off if > X or hit somehting
+  for (int i=0; i<playerCount; i++) { //turns player of
+    players[i].isOn=false;
+    players[i].resetPlayerCoordinate();
+    //players[i].stopMoving(); //PLAYER STOP MOVING should include speed - see notes in player class
+  }
+  for (int i=0; i<levels.length; i++) { //resets candy, exits, levels, skeletons, tiles if weAreLevel is more than 5.
+    levels[i].resetGame();
+  }
+  score=0;
+  life=5;
+  weAreInLevel=0;
+  playerCount=0;
+}
+
+void displayScoreAndLife() {
+  textSize(20);
+  fill(0);
+  text("SCORE: "+score, 655, 20);
+  text("LIFE: "+life, 10, 20);
 }
 
 void showStartScreen() {
   image(menu, 0, 0, 800, 400);
   if (keyCode=='V') {
-    // gamestate=4;
     image(instructions, 0, 0, 800, 400);
   }
   if (keyCode=='N') {
@@ -183,27 +223,10 @@ void showStartScreen() {
   }
   if (keyCode=='B') {
     gamestate=1;
+    playerCount=1;
   }
   if (keyCode=='C') {
     gamestate=1;
-    players[1].display();
+    playerCount=2;
   }
 }
-
-void showHighScoreList() {
-  //load image 
-  //functions
-  //keyCodes - change gamestate to 0 - remember to call this in keypressed with the right gamestate criteria
-}
-
-/*
-GAME_STATES OVERVIEW
- //gamestate 0 = start menu
- //gamestate 1 = playing game
- //gamestate 2 = gameOver
- //gamestate 3 = highscore
- things to remember: 
- - should be in keypressed. 
- - should take 1+2 player into account
- - should be resetable 
- */

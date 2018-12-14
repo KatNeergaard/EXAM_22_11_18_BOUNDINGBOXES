@@ -22,25 +22,27 @@ class Monster {
   //class methods
   void display()
   {
-    PImage monster = spriteSheet.get(0 + (frame * w), h, w, h); //display frame from sprite sheet with Magic Numbers (frame 0 starts at (0, 50) with a size of 50X50 pixels):
-    image(monster, xPos, yPos, w, h);
-    int delta = millis() - ticksLast;
-    if (delta >= durationOneFrame)
-    {
-      frame++;
-      if (frame >= frameMax) { 
-        frame = 0;
+    if (isOn) {
+      PImage monster = spriteSheet.get(0 + (frame * w), h, w, h); //display frame from sprite sheet with Magic Numbers (frame 0 starts at (0, 50) with a size of 50X50 pixels):
+      image(monster, xPos, yPos, w, h);
+      int delta = millis() - ticksLast;
+      if (delta >= durationOneFrame)
+      {
+        frame++;
+        if (frame >= frameMax) { 
+          frame = 0;
+        }
+        //ticksLast = millis(); //adds up time overshooting error
+        ticksLast += delta; //avoids adding up error
       }
-      //ticksLast = millis(); //adds up time overshooting error
-      ticksLast += delta; //avoids adding up error
     }
   }
 
-  void showMonster(int posX, int posY)
+  void addMonster(int posX, int posY, boolean s)
   {
     xPos=posX;
     yPos=posY;
-    isOn=true;
+    isOn=s;
   }
 
   void shoot() {
@@ -50,6 +52,7 @@ class Monster {
   void wasMonsterHit() {
     //if( collisionDetection with shot class){
     //wasMonsterHit=true;
+    //monsterLife--;
   }
 }
 
@@ -59,5 +62,6 @@ class Monster {
 //  }
 //  if (monsterLife<0) {
 //    //something something call anothe rpart of the spritesheet.
+//isOn=false
 //  }
 //}
