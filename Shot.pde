@@ -9,9 +9,9 @@ class Shot {
   int xPos;
   int yPos;
   int h = 35;
-  int w = 30;
+  int w = 35;
   boolean isOn = false;
-  int bullitSpeed=15; 
+  int bullitSpeed=10; 
 
   //constructor
   Shot() {
@@ -21,25 +21,31 @@ class Shot {
   //class methods
   void display()
   {
-    if (isOn) {
-      drawShot();
-      timeFix();
+    if (isOn==true) {
+      //display frame from sprite sheet with Magic Numbers (frame 0 starts at (0, 0) with a size of 35X35 pixels):
+      PImage shot = spriteSheet.get(0 + (frame * w), 0, w, h); 
+      image(shot, xPos, yPos);
+      int delta = millis() - ticksLast;
+      if (delta >= durationOneFrame)
+      {
+        frame++;
+        if (frame >= frameMax) { 
+          frame = 0;
+        }
+        //ticksLast = millis(); //adds up time overshooting error
+        ticksLast += delta; //avoids adding up error
+      }
     }
   }
+
   void activateShot(int newPosX, int newPosY) {
-    xPos=newPosX; //change this to player width
-    yPos=newPosY; //change this to player hiegth/2
+    xPos=newPosX+62; //change this to player width
+    yPos=newPosY+40; //change this to player hiegth/2
     isOn=true;
   }
 
-  void drawShot() {
-    //display frame from sprite sheet with Magic Numbers (frame 0 starts at (0, 0) with a size of 35X35 pixels):
-    PImage shot = spriteSheet.get(0 + (frame * w), 0, w, h); 
-    image(shot, xPos, yPos);
-  }
-
   void move() {
-    if (isOn) {
+    if (isOn==true) {
       //the shots shoud move across the screen until they hit something
       if (xPos>=width) {
         isOn=false;
@@ -59,29 +65,8 @@ class Shot {
     return isOn;
   }
 
-  float getX() { //gets the x position so we can call it in another class
+  float getX() //gets the x position so we can call it in another class
+  {
     return xPos;
-  }
-  int getY() {
-    return yPos;
-  }
-  int getH() {
-    return h;
-  }
-  int getW() {
-    return w;
-  }
-
-  void timeFix() {
-    int delta = millis() - ticksLast;
-    if (delta >= durationOneFrame)
-    {
-      frame++;
-      if (frame >= frameMax) { 
-        frame = 0;
-      }
-      //ticksLast = millis(); //adds up time overshooting error
-      ticksLast += delta; //avoids adding up error
-    }
   }
 }

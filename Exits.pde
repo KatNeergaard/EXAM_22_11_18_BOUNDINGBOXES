@@ -1,53 +1,44 @@
 class Exit {
 
   //class variables
-  int xPos=0;
-  int yPos=0;
+  int xPos;
+  int yPos;
   PImage exit;
   boolean isOn=false;
-  boolean collided=false;
+  boolean exitCollidingWithPlayer=false;
   int exitHeigth = 50;
-  int exitWidth = 25;
 
   //constructor
   Exit() {  
-    exit = loadImage("exit.jpg");
+    exit = loadImage("exit.jpg"); //CHANGE THIS IMAGE
   }
 
   //class methods
   void display() {
-    //if (isOn) {
-    image(exit, xPos, yPos, exitWidth, exitHeigth);
-    //}
+    image(exit, xPos, yPos, 25, exitHeigth);
   }
 
-  void addExit(int posX, int posY, boolean s) {
+  void showExit(int posX, int posY) {
     xPos=posX;
     yPos=posY;
-    isOn=s;
+    isOn=true;
   }
 
   //colision detection - should this happen in level?
   boolean collidingWithPlayer() {
-    if (!isOn) { 
-      return false;
-    }
-    for (int i=0; i<playerCount; i++) {
+    for (int i=0; i<players.length; i++) {
       int playerX = players[i].getX();
       int playerY = players[i].getY();
-      int playerH = players[i].getH();
-      int playerW = players[i].getW();
-      if ((playerX+playerW>=xPos) &&
-        (playerX < xPos+exitWidth) &&
-        (playerY+playerH >= yPos) &&
-        (playerY < yPos+exitHeigth)) 
-      {
-        println("true");
-        addExit(xPos, yPos, false);
-        return true;
-      }
+      int playerH = 62;
+      int playerW = 62;
+      if (playerX+playerW>xPos) {
+        //if ((playerY > yPos) && ((playerY+playerH) < (yPos+exitHeigth))) { //NB: THIS IS NOOOT WORKING!
+          exitCollidingWithPlayer =  true;
+          return true;
+        }
+      //}
     }
-    addExit(xPos, yPos, true);
+    exitCollidingWithPlayer = false;
     return false;
   }
 }
