@@ -1,32 +1,32 @@
 /*
 HEADER
  REMEMBER TO CREDIT THE CREATORS OF SPRITESHEETS ETC
- TEST GITHUB...
- TEST GITHUB KAROLINEFO
  */
 
 Player[] players = new Player[2];
 Shot[] shots = new Shot [50];
 Level[] levels = new Level[5];
 //Candy[] candies = new Candy[50];
-//Skeleton[] skeletons = new Skeleton[50];
+Skeleton[] skeletons = new Skeleton[50];
 //Monster[] monsters = new Monster[20];
 //Exit exit; 
-//Tile[] tiles = new Tile [512];
+Tile[] tiles = new Tile [512];
 
 //variables
 char[] controls = new char[5];
 char[] controls1 = new char[5];
+String[] lines;
 PImage floor;
 PImage instructions;
 PImage menu;
 PImage gameOver;
-PImage highScore;
+PImage highScoreIMG;
 int weAreInLevel=0;
-int life=5; //should -1 upon collsion with enenmy or shots. when life=0 player is gameover
+int life=3; 
 int gamestate=0;
 int playerCount=0;
 int score = 0;
+int highScore=0; 
 
 void setup()
 {
@@ -36,6 +36,11 @@ void setup()
   setControls(); //setting the controls for the players
   setupLevels();
   setupShots();
+  loadScoreFile();
+  for (int i=0; i<tiles.length; i++)
+  {
+    tiles[i] = new Tile();
+  }
 }
 
 void draw()
@@ -46,22 +51,14 @@ void draw()
   } 
   if (gamestate==1) { //gamestate 1 - playing
     displayBackground();
-    showAndUpdateLevels();
     showAndControlPlayers();
     displayAndMoveShots();
+    showAndUpdateLevels();
     displayScoreAndLife();
-    for (int i=0; i<playerCount; i++) { //counts the live and check if the player(s) are gameover
-      if (life==0) {
-        gamestate=2;
-      }
-    }
-  } else if (gamestate==2) { //gamestate 2 - gameOver
+  } else if (gamestate==2) {
     showGameOverScreen();
-    resetGame();
-  } else if (gamestate==3) { //gamestate 3 - game ends aka player gets through all levels and sees their score
-    endGameScreen();
-    //LOAD HIGHSCORE LIST HERE
-    resetGame();
+  } else if (gamestate==3) {
+    endGame();
   }
 }
 
@@ -78,7 +75,7 @@ void keyPressed()
     showStartScreen();
   }
   if (gamestate==3) {
-    endGameScreen();
+    endGame();
   }
 }
 
@@ -95,7 +92,7 @@ void keyReleased()
     showStartScreen();
   }
   if (gamestate==3) {
-    endGameScreen();
+    endGame();
   }
 }
 
@@ -110,13 +107,13 @@ void setControls() {
   controls[0] = 'L';
   controls[1] = 'J';
   controls[2] = 'I';
-  controls[3] = 'M';
-  controls[4] = 'K';
-  controls1[0] = 'D';
-  controls1[1] = 'A';
-  controls1[2] = 'E';
-  controls1[3] = 'X';
-  controls1[4] = 'S';
+  controls[3] = 'K';
+  controls[4] = 'M';
+  controls1[0] = 'D'; //right
+  controls1[1] = 'A'; //left
+  controls1[2] = 'W'; //up
+  controls1[3] = 'S'; //down
+  controls1[4] = 'Z'; //shoot
   for (int i = 0; i < players.length; i++)
   {
     players[0].setControls(controls);
@@ -133,7 +130,7 @@ void loadImages() {
   instructions = loadImage("instructions.png"); //loading the instructions-screen
   menu = loadImage("startmenu.png");
   gameOver = loadImage("gameover.png");
-  highScore = loadImage("highscore.png");
+  highScoreIMG = loadImage("highscoreIMG.png");
 }
 
 void setupShots() {
@@ -179,32 +176,68 @@ void showAndUpdateLevels() {
 
 void showGameOverScreen() {
   image(gameOver, 0, 0, 800, 400);
-  if (keyCode=='N') {
-    gamestate=0;
-  }
-}
-
-void endGameScreen() {
-  image(highScore, 0, 0, 800, 400);
-  if (keyCode=='N') {
-    gamestate=0;
-  }
-}
-
-void resetGame() { //Some objects might be off already due to other circumstances, but if not, this function take scare of it. The shots turn themselves off if > X or hit somehting
-  for (int i=0; i<playerCount; i++) { //turns player of
-    players[i].isOn=false;
-    players[i].resetPlayerCoordinate();
-    //players[i].stopMoving(); //PLAYER STOP MOVING should include speed - see notes in player class
-  }
-  for (int i=0; i<levels.length; i++) { //resets candy, exits, levels, skeletons, tiles if weAreLevel is more than 5.
-    levels[i].resetGame();
-  }
   score=0;
-  life=5;
-  weAreInLevel=0;
-  playerCount=0;
+  life=0;
+  //EVERTHING SHOULD BE RESET HERE!!!!
+  if (keyCode=='V') {
+    gamestate=0;
+  }
 }
+
+void endGame() {
+  drawEndscreenGraphics();
+  addScoreToHighscoreList();
+  saveFile();
+  sortAndShowHighscoreList ();
+
+  //EVERTHING SHOULD BE RESET HERE!!!
+  if (keyCode=='N') {
+    gamestate=0;
+    score=0;
+    life=0;
+  }
+}
+
+void drawEndscreenGraphics() {
+  image(highScoreIMG, 0, 0, 800, 400);
+  fill(255, 255, 0);
+  text(+score, 350, 120);
+}
+
+void sortAndShowHighscoreList() {
+  for (int i=0; i<lines.length; i++)
+    lines = sort(lines);
+  lines = reverse(lines);
+  {
+    displayScoresFromHighScoreList();
+  }
+}
+
+void displayScoresFromHighScoreList () {
+  for (int i=0; i<5; i++) { //only show top five
+    text(lines[i], 600, 120+60*i);
+  }
+}
+
+void addScoreToHighscoreList() {
+  // for (int i=0; i<lines.length; i++) {
+  //set(lines[i+1], score); SET DOESNT WORK WITHOUT INTLIST
+  //   expand(lines[i], +1); nullPointException.... 
+  //lines.add(new line(score)); ADD() ONLY WORKS FOR OBJECTS...
+}
+
+void saveFile() {
+  saveStrings("highscoreList.txt", lines);
+}
+
+void loadScoreFile() {
+  lines = loadStrings("highscoreList.txt");
+}
+
+//We don't need highscore when saving it n a file?
+//void calcHighscore() {
+//  highScore=max(score, highScore);
+//}
 
 void displayScoreAndLife() {
   textSize(20);
